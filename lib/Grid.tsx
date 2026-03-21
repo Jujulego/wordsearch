@@ -1,34 +1,34 @@
 'use client';
 
 import clsx from 'clsx';
-import { type MouseEvent, useCallback, useEffect, useState } from 'react';
+import { type PointerEvent, useCallback, useEffect, useState } from 'react';
 
 export default function Grid({ className, grid }: GridProps) {
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const [endPoint, setEndPoint] = useState<Point | null>(null);
   const [overlays, setOverlays] = useState<(readonly [Point, Point])[]>([]);
 
-  const handleMouseDown = useCallback((event: MouseEvent) => {
-    const target = event.target as HTMLElement;
+  const handlePointerDown = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    const container = event.currentTarget.getBoundingClientRect();
     const point = {
-      x: parseInt(target.getAttribute('data-x')!),
-      y: parseInt(target.getAttribute('data-y')!),
+      x: Math.floor((event.clientX - container.left) / 32),
+      y: Math.floor((event.clientY - container.top) / 32),
     };
 
     setStartPoint(point);
     setEndPoint(point);
   }, []);
 
-  const handleMouseMove = useCallback((event: MouseEvent) => {
-    const target = event.target as HTMLElement;
+  const handlePointerMove = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    const container = event.currentTarget.getBoundingClientRect();
 
     setEndPoint({
-      x: parseInt(target.getAttribute('data-x')!),
-      y: parseInt(target.getAttribute('data-y')!),
+      x: Math.floor((event.clientX - container.left) / 32),
+      y: Math.floor((event.clientY - container.top) / 32),
     });
   }, []);
 
-  const handleMouseUp = useCallback(() => {
+  const handlePointerUp = useCallback(() => {
     if (startPoint && endPoint) {
       if (startPoint.x !== endPoint.x || startPoint.y !== endPoint.y) {
         setOverlays((old) => [...old, [startPoint, endPoint]]);
@@ -40,19 +40,20 @@ export default function Grid({ className, grid }: GridProps) {
   }, [startPoint, endPoint]);
 
   useEffect(() => {
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('pointerup', handlePointerUp);
+    document.addEventListener('pointercancel', handlePointerUp);
 
     return () => {
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('pointerup', handlePointerUp);
+      document.removeEventListener('pointercancel', handlePointerUp);
     }
-  }, []);
+  }, [handlePointerUp]);
 
   return (
     <div
       className={clsx('relative grid auto-cols-auto auto-rows-auto w-fit select-none', className)}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
     >
       {grid.map((row, y) => row.map((cell, x) => (
         <div
