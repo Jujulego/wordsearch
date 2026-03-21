@@ -4,3 +4,13 @@
   --font-sans: var(--font-roboto-sans);
   --font-mono: var(--font-roboto-mono);
 }
+
+@property --font-roboto-sans {
+  syntax: "*";
+  inherits: true;
+}
+
+@property --font-roboto-mono {
+  syntax: "*";
+  inherits: true;
+}
