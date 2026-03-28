@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme inline {
   --font-sans: var(--font-roboto-sans);
@@ -6,11 +6,11 @@
 }
 
 @property --font-roboto-sans {
-  syntax: "*";
+  syntax: '*';
   inherits: true;
 }
 
 @property --font-roboto-mono {
-  syntax: "*";
+  syntax: '*';
   inherits: true;
 }
