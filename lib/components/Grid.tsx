@@ -45,7 +45,7 @@ export default function Grid({ className, grid }: GridProps) {
       {overlays.map(([start, end], idx) => (
         <GridSegment
           key={idx}
-          className="pointer-events-none absolute -z-10 bg-amber-200/50"
+          className="pointer-events-none absolute -z-10 bg-rainbow-200/50 bg-fuchsia-200"
           cellSize={32}
           thickness={20}
           start={start}
@@ -55,7 +55,7 @@ export default function Grid({ className, grid }: GridProps) {
 
       {pointedStart && pointedEnd && (
         <GridSegment
-          className="pointer-events-none absolute -z-10 bg-amber-200/50"
+          className="pointer-events-none absolute -z-10 bg-rainbow-200/50"
           cellSize={32}
           thickness={20}
           start={pointedStart}

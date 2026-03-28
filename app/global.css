@@ -14,3 +14,47 @@
   syntax: '*';
   inherits: true;
 }
+
+@utility bg-rainbow-* {
+  &:nth-child(7n + 1) {
+    background-color: --value(--color-red-*);
+    /* prettier-ignore */
+    background-color: --alpha(--value(--color-red-*) / --modifier(number)%);
+  }
+
+  &:nth-child(7n + 2) {
+    background-color: --value(--color-orange-*);
+    /* prettier-ignore */
+    background-color: --alpha(--value(--color-orange-*) / --modifier(number)%);
+  }
+
+  &:nth-child(7n + 3) {
+    background-color: --value(--color-yellow-*);
+    /* prettier-ignore */
+    background-color: --alpha(--value(--color-yellow-*) / --modifier(number)%);
+  }
+
+  &:nth-child(7n + 4) {
+    background-color: --value(--color-green-*);
+    /* prettier-ignore */
+    background-color: --alpha(--value(--color-green-*) / --modifier(number)%);
+  }
+
+  &:nth-child(7n + 5) {
+    background-color: --value(--color-sky-*);
+    /* prettier-ignore */
+    background-color: --alpha(--value(--color-sky-*) / --modifier(number)%);
+  }
+
+  &:nth-child(7n + 6) {
+    background-color: --value(--color-blue-*);
+    /* prettier-ignore */
+    background-color: --alpha(--value(--color-blue-*) / --modifier(number)%);
+  }
+
+  &:nth-child(7n) {
+    background-color: --value(--color-violet-*);
+    /* prettier-ignore */
+    background-color: --alpha(--value(--color-violet-*) / --modifier(number)%);
+  }
+}
