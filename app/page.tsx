@@ -1,4 +1,4 @@
-import Grid from '@/lib/Grid';
+import Grid from '@/lib/components/Grid';
 
 const grid = [
   ['A', 'B', 'C', 'D', 'E', 'F'],
