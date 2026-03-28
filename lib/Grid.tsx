@@ -1,9 +1,12 @@
 'use client';
 
 import clsx from 'clsx';
-import { type PointerEvent, useCallback, useEffect, useState } from 'react';
+import React, { useRef } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function Grid({ className, grid }: GridProps) {
+  const gridRef = useRef<HTMLDivElement>(null);
+
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const [endPoint, setEndPoint] = useState<Point | null>(null);
   const [overlays, setOverlays] = useState<(readonly [Point, Point])[]>([]);
@@ -12,7 +15,7 @@ export default function Grid({ className, grid }: GridProps) {
   const cols = grid[0].length;
 
   const handlePointerDown = useCallback(
-    (event: PointerEvent<HTMLDivElement>) => {
+    (event: React.PointerEvent<HTMLDivElement>) => {
       const container = event.currentTarget.getBoundingClientRect();
       const point = {
         x: Math.min(Math.max(Math.floor((event.clientX - container.left) / 32), 0), cols - 1),
@@ -26,13 +29,12 @@ export default function Grid({ className, grid }: GridProps) {
   );
 
   const handlePointerMove = useCallback(
-    (event: PointerEvent<HTMLDivElement>) => {
-      if (!startPoint) {
-        return;
-      }
+    (event: PointerEvent) => {
+      if (!startPoint) return;
+      if (!gridRef.current) return;
 
       // Compute "hovered" point
-      const container = event.currentTarget.getBoundingClientRect();
+      const container = gridRef.current.getBoundingClientRect();
 
       let point = {
         x: Math.floor((event.clientX - container.left) / 32),
@@ -105,19 +107,21 @@ export default function Grid({ className, grid }: GridProps) {
 
   useEffect(() => {
     document.addEventListener('pointerup', handlePointerUp);
+    document.addEventListener('pointermove', handlePointerMove);
     document.addEventListener('pointercancel', handlePointerUp);
 
     return () => {
       document.removeEventListener('pointerup', handlePointerUp);
+      document.removeEventListener('pointermove', handlePointerMove);
       document.removeEventListener('pointercancel', handlePointerUp);
     };
-  }, [handlePointerUp]);
+  }, [handlePointerMove, handlePointerUp]);
 
   return (
     <div
+      ref={gridRef}
       className={clsx('relative grid w-fit auto-cols-auto auto-rows-auto select-none', className)}
       onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
     >
       {grid.map((row, y) =>
         row.map((cell, x) => (
