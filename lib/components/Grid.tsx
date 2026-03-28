@@ -1,8 +1,8 @@
 'use client';
 
+import GridSegment from '@/lib/components/GridSegment';
 import useSegmentPointer from '@/lib/hooks/useSegmentPointer';
 import type { Point } from '@/lib/types/point';
-import { orientation, length } from '@/lib/utils/segment';
 import clsx from 'clsx';
 import React, { useCallback, useRef, useState } from 'react';
 
@@ -43,25 +43,23 @@ export default function Grid({ className, grid }: GridProps) {
       )}
 
       {overlays.map(([start, end], idx) => (
-        <div
+        <GridSegment
           key={idx}
-          className="pointer-events-none absolute -z-10 h-5 w-full bg-amber-200/50"
-          style={{
-            width: `${length(start, end)}px`,
-            transform: `translate(${start.x * 32 + 6}px, ${start.y * 32 + 6}px) rotate(${orientation(start, end)}rad)`,
-            transformOrigin: '10px 10px',
-          }}
+          className="pointer-events-none absolute -z-10 bg-amber-200/50"
+          cellSize={32}
+          thickness={20}
+          start={start}
+          end={end}
         />
       ))}
 
       {pointedStart && pointedEnd && (
-        <div
-          className="pointer-events-none absolute -z-10 h-5 w-full bg-amber-200/50"
-          style={{
-            width: `${length(pointedStart, pointedEnd)}px`,
-            transform: `translate(${pointedStart.x * 32 + 6}px, ${pointedStart.y * 32 + 6}px) rotate(${orientation(pointedStart, pointedEnd)}rad)`,
-            transformOrigin: '10px 10px',
-          }}
+        <GridSegment
+          className="pointer-events-none absolute -z-10 bg-amber-200/50"
+          cellSize={32}
+          thickness={20}
+          start={pointedStart}
+          end={pointedEnd}
         />
       )}
     </div>

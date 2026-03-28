@@ -16,8 +16,8 @@ export function orientation(start: Point, end: Point) {
 }
 
 export function length(start: Point, end: Point) {
-  const dx = (end.x - start.x) * 32;
-  const dy = (end.y - start.y) * 32;
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
 
-  return Math.sqrt(dx * dx + dy * dy) + 20;
+  return Math.sqrt(dx * dx + dy * dy);
 }
