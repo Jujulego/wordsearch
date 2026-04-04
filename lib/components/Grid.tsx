@@ -48,6 +48,7 @@ export default function Grid({ className, grid }: GridProps) {
             className="size-8 text-center leading-8"
             data-x={x}
             data-y={y}
+            data-sentry-unmask
             style={{ gridRow: y + 1, gridColumn: x + 1 }}
           >
             {cell}
