@@ -11,14 +11,24 @@ export default function Grid({ className, grid }: GridProps) {
 
   const [overlays, setOverlays] = useState<(readonly [Point, Point])[]>([]);
 
-  const { pointedStart, pointedEnd } = useSegmentPointer({
+  const { ongoingSegments } = useSegmentPointer({
     cellSize: 32,
     rowCount: grid.length,
     columnCount: grid[0].length,
     containerRef: gridRef,
-    onSegmentCompleted: useCallback((start, end) => {
-      if (start.x !== end.x || start.y !== end.y) {
-        setOverlays((old) => [...old, [start, end]]);
+    onSegmentCompleted: useCallback((segment) => {
+      if (segment[0].x !== segment[1].x || segment[0].y !== segment[1].y) {
+        setOverlays((old) => {
+          const alreadyExists = old.some(
+            (s) =>
+              s[0].x === segment[0].x &&
+              s[0].y === segment[0].y &&
+              s[1].x === segment[1].x &&
+              s[1].y === segment[1].y,
+          );
+
+          return alreadyExists ? old : [...old, segment];
+        });
       }
     }, []),
   });
@@ -26,7 +36,10 @@ export default function Grid({ className, grid }: GridProps) {
   return (
     <div
       ref={gridRef}
-      className={clsx('relative grid w-fit auto-cols-auto auto-rows-auto select-none', className)}
+      className={clsx(
+        'relative grid w-fit touch-none auto-cols-auto auto-rows-auto select-none',
+        className,
+      )}
     >
       {grid.map((row, y) =>
         row.map((cell, x) => (
@@ -53,15 +66,16 @@ export default function Grid({ className, grid }: GridProps) {
         />
       ))}
 
-      {pointedStart && pointedEnd && (
+      {ongoingSegments.map(([start, end], idx) => (
         <GridSegment
+          key={idx}
           className="pointer-events-none absolute -z-10 bg-rainbow-200/50 dark:bg-rainbow-500/50"
           cellSize={32}
           thickness={20}
-          start={pointedStart}
-          end={pointedEnd}
+          start={start}
+          end={end}
         />
-      )}
+      ))}
     </div>
   );
 }

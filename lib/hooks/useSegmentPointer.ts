@@ -1,148 +1,255 @@
 import type { Point } from '@/lib/types/point';
 import { orientation } from '@/lib/utils/segment';
-import { type RefObject, useCallback, useEffect, useState } from 'react';
+import { type RefObject, useCallback, useEffect, useEffectEvent, useMemo, useReducer } from 'react';
+
+const MOUSE_ID = -1;
+
+export type Segment = readonly [Point, Point];
 
 export interface SegmentPointerProps {
   readonly cellSize: number;
   readonly rowCount: number;
   readonly columnCount: number;
   readonly containerRef: RefObject<HTMLElement | null>;
-  readonly onSegmentCompleted: (start: Point, end: Point) => void;
+  readonly onSegmentCompleted: (segment: Segment) => void;
 }
 
 export interface SegmentPointerState {
   readonly isPointing: boolean;
-  readonly pointedStart: Point | null;
-  readonly pointedEnd: Point | null;
+  readonly ongoingSegments: readonly Segment[];
 }
 
 export default function useSegmentPointer(props: SegmentPointerProps): SegmentPointerState {
-  const { cellSize, rowCount: rows, columnCount: cols, containerRef, onSegmentCompleted } = props;
+  const { containerRef, onSegmentCompleted } = props;
 
-  const [startPoint, setStartPoint] = useState<Point | null>(null);
-  const [endPoint, setEndPoint] = useState<Point | null>(null);
+  const [state, dispatch] = useSegmentsState(props);
 
-  const handlePointerDown = useCallback(
-    (event: PointerEvent) => {
-      if (!containerRef.current) return;
+  const handleMouseDown = useEffectEvent((event: MouseEvent) => {
+    console.log('mouse!');
+    dispatch({
+      type: 'start',
+      id: MOUSE_ID,
+      clientX: event.clientX,
+      clientY: event.clientY,
+    });
+  });
 
-      const container = containerRef.current.getBoundingClientRect();
-      const point = {
-        x: Math.min(Math.max(Math.floor((event.clientX - container.left) / cellSize), 0), cols - 1),
-        y: Math.min(Math.max(Math.floor((event.clientY - container.top) / cellSize), 0), rows - 1),
-      };
+  const handleTouchStart = useEffectEvent((event: TouchEvent) => {
+    console.log('touch!');
+    for (const touch of event.changedTouches) {
+      dispatch({
+        type: 'start',
+        id: touch.identifier,
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+      });
+    }
+  });
 
-      setStartPoint(point);
-      setEndPoint(point);
-    },
-    [cellSize, cols, containerRef, rows],
-  );
+  const handleMouseMove = useEffectEvent((event: MouseEvent) => {
+    dispatch({
+      type: 'move',
+      id: MOUSE_ID,
+      clientX: event.clientX,
+      clientY: event.clientY,
+    });
+  });
 
-  const handlePointerMove = useCallback(
-    (event: PointerEvent) => {
-      if (!startPoint) return;
-      if (!containerRef.current) return;
+  const handleTouchMove = useEffectEvent((event: TouchEvent) => {
+    for (const touch of event.changedTouches) {
+      dispatch({
+        type: 'move',
+        id: touch.identifier,
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+      });
+    }
+  });
 
-      // Compute "hovered" point
-      const container = containerRef.current.getBoundingClientRect();
-
-      let point = {
-        x: Math.floor((event.clientX - container.left) / cellSize),
-        y: Math.floor((event.clientY - container.top) / cellSize),
-      };
-
-      let dx = point.x - startPoint.x;
-      let dy = point.y - startPoint.y;
-
-      // Limit angle
-      const a = Math.round(orientation(startPoint, point) / (Math.PI / 4)) * (Math.PI / 4);
-
-      if (Math.abs(a) === Math.PI / 2) {
-        point = {
-          x: startPoint.x,
-          y: Math.min(Math.max(point.y, 0), rows - 1),
-        };
-      } else if (Math.abs(a) === Math.PI || a === 0) {
-        point = {
-          x: Math.min(Math.max(point.x, 0), cols - 1),
-          y: startPoint.y,
-        };
-      } else if (Math.abs(dx) < Math.abs(dy)) {
-        point = {
-          x: point.x,
-          y: startPoint.y + Math.round(dx * Math.tan(a)),
-        };
-      } else {
-        point = {
-          x: startPoint.x + Math.round(dy / Math.tan(a)),
-          y: point.y,
-        };
-      }
-
-      // Limit length
-      dx = point.x - startPoint.x;
-      dy = point.y - startPoint.y;
-
-      if (point.x > cols - 1) {
-        point.x = cols - 1;
-        point.y = startPoint.y + Math.sign(dy) * (cols - 1 - startPoint.x);
-      } else if (point.x < 0) {
-        point.x = 0;
-        point.y = startPoint.y + Math.sign(dy) * startPoint.x;
-      }
-
-      if (point.y > rows - 1) {
-        point.x = startPoint.x + Math.sign(dx) * (rows - 1 - startPoint.y);
-        point.y = rows - 1;
-      } else if (point.y < 0) {
-        point.x = startPoint.x + Math.sign(dx) * startPoint.y;
-        point.y = 0;
-      }
-
-      setEndPoint(point);
-    },
-    [startPoint, containerRef, cellSize, cols, rows],
-  );
-
-  const handlePointerUp = useCallback(() => {
-    if (startPoint && endPoint) {
-      onSegmentCompleted(startPoint, endPoint);
+  const handleMouseUp = useEffectEvent(() => {
+    if (state[MOUSE_ID]) {
+      onSegmentCompleted(state[MOUSE_ID]);
     }
 
-    setStartPoint(null);
-    setEndPoint(null);
-  }, [startPoint, endPoint, onSegmentCompleted]);
+    dispatch({ type: 'end', id: MOUSE_ID });
+  });
+
+  const handleTouchEnd = useEffectEvent((event: TouchEvent) => {
+    for (const touch of event.changedTouches) {
+      if (state[touch.identifier]) {
+        onSegmentCompleted(state[touch.identifier]);
+      }
+
+      dispatch({ type: 'end', id: touch.identifier });
+    }
+  });
+
+  const handleTouchCancel = useEffectEvent((event: TouchEvent) => {
+    for (const touch of event.changedTouches) {
+      dispatch({ type: 'end', id: touch.identifier });
+    }
+  });
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    container.addEventListener('pointerdown', handlePointerDown);
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('touchstart', handleTouchStart);
 
     return () => {
-      container.removeEventListener('pointerdown', handlePointerDown);
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('touchstart', handleTouchStart);
     };
-  }, [containerRef, handlePointerDown]);
+  }, [containerRef]);
 
   useEffect(() => {
-    document.addEventListener('pointermove', handlePointerMove);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('touchcancel', handleTouchCancel);
 
     return () => {
-      document.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener('touchcancel', handleTouchCancel);
     };
-  }, [handlePointerMove]);
+  }, []);
 
-  useEffect(() => {
-    document.addEventListener('pointerup', handlePointerUp);
-
-    return () => {
-      document.removeEventListener('pointerup', handlePointerUp);
-    };
-  }, [handlePointerUp]);
+  const ongoingSegments = useMemo(() => Object.values(state), [state]);
 
   return {
-    isPointing: startPoint !== null,
-    pointedStart: startPoint,
-    pointedEnd: endPoint,
+    isPointing: ongoingSegments.length > 0,
+    ongoingSegments,
   };
+}
+
+// Internal state
+type SegmentsState = Record<number, Segment>;
+
+interface StartSegmentAction {
+  readonly type: 'start';
+  readonly id: number;
+  readonly clientX: number;
+  readonly clientY: number;
+}
+
+interface MoveSegmentAction {
+  readonly type: 'move';
+  readonly id: number;
+  readonly clientX: number;
+  readonly clientY: number;
+}
+
+interface EndSegmentAction {
+  readonly type: 'end';
+  readonly id: number;
+}
+
+type SegmentsAction = StartSegmentAction | MoveSegmentAction | EndSegmentAction;
+
+function useSegmentsState(props: SegmentPointerProps) {
+  const { containerRef, cellSize, columnCount: cols, rowCount: rows } = props;
+
+  const reducer = useCallback(
+    (state: SegmentsState, action: SegmentsAction): SegmentsState => {
+      if (!containerRef.current) {
+        return state;
+      }
+
+      switch (action.type) {
+        case 'start': {
+          const bbox = containerRef.current.getBoundingClientRect();
+          const point = {
+            x: Math.min(Math.max(Math.floor((action.clientX - bbox.left) / cellSize), 0), cols - 1),
+            y: Math.min(Math.max(Math.floor((action.clientY - bbox.top) / cellSize), 0), rows - 1),
+          };
+
+          return {
+            ...state,
+            [action.id]: [point, point],
+          };
+        }
+        case 'move': {
+          if (!state[action.id]) {
+            return state;
+          }
+
+          const [start] = state[action.id];
+
+          // Compute "hovered" point
+          const bbox = containerRef.current.getBoundingClientRect();
+
+          let point = {
+            x: Math.floor((action.clientX - bbox.left) / cellSize),
+            y: Math.floor((action.clientY - bbox.top) / cellSize),
+          };
+
+          let dx = point.x - start.x;
+          let dy = point.y - start.y;
+
+          // Limit angle
+          const a = Math.round(orientation(start, point) / (Math.PI / 4)) * (Math.PI / 4);
+
+          if (Math.abs(a) === Math.PI / 2) {
+            point = {
+              x: start.x,
+              y: Math.min(Math.max(point.y, 0), rows - 1),
+            };
+          } else if (Math.abs(a) === Math.PI || a === 0) {
+            point = {
+              x: Math.min(Math.max(point.x, 0), cols - 1),
+              y: start.y,
+            };
+          } else if (Math.abs(dx) < Math.abs(dy)) {
+            point = {
+              x: point.x,
+              y: start.y + Math.round(dx * Math.tan(a)),
+            };
+          } else {
+            point = {
+              x: start.x + Math.round(dy / Math.tan(a)),
+              y: point.y,
+            };
+          }
+
+          // Limit length
+          dx = point.x - start.x;
+          dy = point.y - start.y;
+
+          if (point.x > cols - 1) {
+            point.x = cols - 1;
+            point.y = start.y + Math.sign(dy) * (cols - 1 - start.x);
+          } else if (point.x < 0) {
+            point.x = 0;
+            point.y = start.y + Math.sign(dy) * start.x;
+          }
+
+          if (point.y > rows - 1) {
+            point.x = start.x + Math.sign(dx) * (rows - 1 - start.y);
+            point.y = rows - 1;
+          } else if (point.y < 0) {
+            point.x = start.x + Math.sign(dx) * start.y;
+            point.y = 0;
+          }
+
+          return { ...state, [action.id]: [start, point] };
+        }
+        case 'end': {
+          if (!state[action.id]) {
+            return state;
+          }
+
+          const { [action.id]: _, ...rest } = state;
+          return rest;
+        }
+      }
+    },
+    [cellSize, cols, containerRef, rows],
+  );
+
+  return useReducer(reducer, {});
 }
