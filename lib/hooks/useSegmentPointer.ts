@@ -25,7 +25,6 @@ export default function useSegmentPointer(props: SegmentPointerProps): SegmentPo
   const [state, dispatch] = useSegmentsState(props);
 
   const handleMouseDown = useEffectEvent((event: MouseEvent) => {
-    console.log('mouse!');
     dispatch({
       type: 'start',
       id: MOUSE_ID,
@@ -35,7 +34,6 @@ export default function useSegmentPointer(props: SegmentPointerProps): SegmentPo
   });
 
   const handleTouchStart = useEffectEvent((event: TouchEvent) => {
-    console.log('touch!');
     for (const touch of event.changedTouches) {
       dispatch({
         type: 'start',
