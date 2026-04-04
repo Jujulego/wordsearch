@@ -5,6 +5,15 @@
   --font-mono: var(--font-roboto-mono);
 }
 
+body {
+  @apply bg-gray-50 text-gray-900;
+
+  @variant dark {
+    @apply bg-gray-900 text-gray-50;
+  }
+}
+
+/* Properties */
 @property --font-roboto-sans {
   syntax: '*';
   inherits: true;
@@ -15,6 +24,7 @@
   inherits: true;
 }
 
+/* Utilities */
 @utility bg-rainbow-* {
   &:nth-child(7n + 1) {
     background-color: --value(--color-red-*);
