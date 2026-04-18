@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "jill run '(prisma:generate // prisma:deploy) && build:next'",
+    "build": "jill run '(prisma:generate // prisma:deploy) && prisma:seed && build:next'",
     "build:next": "next build",
     "start": "next start",
     "lint": "eslint",
