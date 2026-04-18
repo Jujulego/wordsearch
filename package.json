@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "jill run '(prisma:generate // prisma:deploy) && build:next'",
+    "build:next": "next build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
     "prisma": "prisma",
     "prisma:dev": "yarn prisma migrate dev",
     "prisma:deploy": "yarn prisma migrate deploy",
@@ -25,6 +28,7 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@jujulego/jill": "3.0.9",
     "@tailwindcss/postcss": "4.2.2",
     "@types/node": "24.12.2",
     "@types/pg": "8.20.0",
