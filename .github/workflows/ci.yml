@@ -1,0 +1,40 @@
+name: ci.yml
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: 'Lint'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6.3.0
+        with:
+          node-version: 24.x
+          cache: yarn
+
+      - name: Install
+        run: yarn install --immutable
+
+      - name: Lint
+        continue-on-error: true
+        run: yarn lint -f @microsoft/sarif -o eslint-results.sarif
+
+      - name: Upload analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v4.35.2
+        with:
+          sarif_file: eslint-results.sarif
+          wait-for-processing: true
