@@ -6,3 +6,9 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Word {
+  word String @id
+
+  @@index([word(ops: raw("gin_trgm_ops"))], type: Gin)
+}

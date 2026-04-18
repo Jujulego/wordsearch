@@ -9,6 +9,7 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "prisma": "prisma",
+    "prisma:dev": "yarn prisma migrate dev",
     "prisma:deploy": "yarn prisma migrate deploy",
     "prisma:generate": "yarn prisma generate"
   },
