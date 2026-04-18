@@ -1,0 +1,32 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "baseBranchPatterns": ["main"],
+  "labels": ["dependencies"],
+  "rebaseWhen": "behind-base-branch",
+  "packageRules": [
+    {
+      "matchCategories": ["ci"],
+      "addLabels": ["github-actions"]
+    },
+    {
+      "matchCategories": ["js"],
+      "addLabels": ["javascript"],
+      "postUpdateOptions": ["yarnDedupeHighest"]
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    }
+  ]
+}
