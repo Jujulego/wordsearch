@@ -14,7 +14,8 @@
     "prisma": "prisma",
     "prisma:dev": "yarn prisma migrate dev",
     "prisma:deploy": "yarn prisma migrate deploy",
-    "prisma:generate": "yarn prisma generate"
+    "prisma:generate": "yarn prisma generate",
+    "prisma:seed": "yarn prisma db seed"
   },
   "dependencies": {
     "@prisma/adapter-neon": "7.7.0",
