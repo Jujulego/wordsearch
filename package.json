@@ -41,7 +41,7 @@
     "eslint-config-next": "16.2.4",
     "eslint-config-prettier": "10.1.8",
     "jiti": "2.6.1",
-    "prettier": "3.8.1",
+    "prettier": "3.8.3",
     "prettier-plugin-tailwindcss": "0.7.2",
     "prisma": "7.7.0",
     "tailwindcss": "4.2.2",
