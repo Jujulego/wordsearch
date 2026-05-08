@@ -20,7 +20,7 @@
   "dependencies": {
     "@prisma/adapter-neon": "7.8.0",
     "@prisma/client": "7.8.0",
-    "@sentry/nextjs": "10.51.0",
+    "@sentry/nextjs": "10.52.0",
     "clsx": "2.1.1",
     "dotenv": "17.4.2",
     "next": "16.2.6",
