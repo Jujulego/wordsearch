@@ -1,10 +1,16 @@
 'use client';
 
 import GridSegment from '@/lib/components/GridSegment';
+import type { WordGrid } from '@/lib/word-grid';
 import useSegmentPointer from '@/lib/hooks/useSegmentPointer';
 import type { Point } from '@/lib/types/point';
 import clsx from 'clsx';
 import React, { useCallback, useRef, useState } from 'react';
+
+export interface GridProps {
+  readonly className?: string;
+  readonly grid: WordGrid;
+}
 
 export default function Grid({ className, grid }: GridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
@@ -79,9 +85,4 @@ export default function Grid({ className, grid }: GridProps) {
       ))}
     </div>
   );
-}
-
-export interface GridProps {
-  readonly className?: string;
-  readonly grid: readonly (readonly string[])[];
 }

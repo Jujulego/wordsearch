@@ -1,15 +1,10 @@
 import Grid from '@/lib/components/Grid';
+import { generateWordGrid } from '@/lib/word-grid';
+import { connection } from 'next/server';
 
-const grid: string[][] = [];
+export default async function Home() {
+  await connection();
+  const grid = await generateWordGrid({ w: 15, h: 25 }, 60);
 
-for (let i = 0; i < 25; i++) {
-  grid.push([]);
-
-  for (let j = 0; j < 15; j++) {
-    grid[i].push('A');
-  }
-}
-
-export default function Home() {
   return <Grid className="m-auto" grid={grid} />;
 }
