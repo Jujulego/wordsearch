@@ -29,7 +29,7 @@
     "react-dom": "19.2.7"
   },
   "devDependencies": {
-    "@jujulego/jill": "3.0.9",
+    "@jujulego/jill": "3.0.10",
     "@microsoft/eslint-formatter-sarif": "3.1.0",
     "@tailwindcss/postcss": "4.3.0",
     "@types/node": "24.13.1",
