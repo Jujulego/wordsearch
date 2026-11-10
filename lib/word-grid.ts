@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma.client';
 import type { Size } from '@/lib/types/size';
 import type { Vector } from '@/lib/types/vector';
-import { Point } from '@/lib/types/point';
 import { add, mul } from '@/lib/utils/algebra';
 import { randomItem, randomPointIn } from '@/lib/utils/random';
 import { isInsideRectangle } from '@/lib/utils/rectangle';
