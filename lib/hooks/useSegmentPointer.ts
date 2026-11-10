@@ -241,8 +241,10 @@ function useSegmentsState(props: SegmentPointerProps) {
             return state;
           }
 
-          const { [action.id]: _, ...rest } = state;
-          return rest;
+          const updated = { ...state };
+          delete updated[action.id];
+
+          return updated;
         }
       }
     },
