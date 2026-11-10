@@ -1,4 +1,4 @@
-name: ci.yml
+name: autofix.ci
 
 on:
   push:
