@@ -8,7 +8,13 @@ datasource db {
 }
 
 model Word {
-  word String @id
+  word      String @id
+  frequency Float
 
   @@index([word(ops: raw("gin_trgm_ops"))], type: Gin)
+}
+
+model Seed {
+  id       String   @id
+  seededAt DateTime @default(now())
 }

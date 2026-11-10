@@ -3,6 +3,7 @@
   "extends": ["config:recommended"],
   "baseBranchPatterns": ["main"],
   "labels": ["dependencies"],
+  "minimumReleaseAge": "7 days",
   "rebaseWhen": "behind-base-branch",
   "packageRules": [
     {
