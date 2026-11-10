@@ -31,7 +31,7 @@ export async function loadLexique4Words(prisma: PrismaClient) {
     async function* (source) {
       let promises: PromiseLike<unknown>[] = [];
 
-      for await (const record of source) {
+      for await (const record of source as AsyncIterable<Lexique4Record>) {
         promises.push(
           prisma.word.upsert({
             where: {

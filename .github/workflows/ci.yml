@@ -8,8 +8,8 @@ on:
     branches: [main]
 
 jobs:
-  lint:
-    name: 'Lint'
+  code-style:
+    name: 'Code Style'
     runs-on: ubuntu-latest
 
     permissions:
@@ -28,6 +28,12 @@ jobs:
 
       - name: Install
         run: yarn install --immutable
+
+      - name: Prettier
+        run: yarn run prettier:write
+
+      - name: Autofix
+        uses: autofix-ci/action@v1
 
       - name: Lint
         continue-on-error: true
