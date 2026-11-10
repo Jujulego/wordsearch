@@ -3269,6 +3269,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"csv-parse@npm:7.0.3":
+  version: 7.0.3
+  resolution: "csv-parse@npm:7.0.3"
+  checksum: 10c0/90d444df5bb14a5531fb87163be5236951a43092934c9ea10e1308cceefdd692c8c0b49f93c616a92a1c9695f371a376268bf45325bb88f60a1328274748cc25
+  languageName: node
+  linkType: hard
+
 "d3-array@npm:2 - 3, d3-array@npm:2.10.0 - 3, d3-array@npm:2.5.0 - 3":
   version: 3.2.5
   resolution: "d3-array@npm:3.2.5"
@@ -7668,6 +7675,7 @@ __metadata:
     "@types/react-dom": "npm:19.3.0"
     babel-plugin-react-compiler: "npm:1.0.0"
     clsx: "npm:2.1.1"
+    csv-parse: "npm:7.0.3"
     dotenv: "npm:17.4.2"
     eslint: "npm:9.39.5"
     eslint-config-next: "npm:16.4.5"

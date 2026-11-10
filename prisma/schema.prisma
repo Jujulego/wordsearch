@@ -13,3 +13,8 @@ model Word {
 
   @@index([word(ops: raw("gin_trgm_ops"))], type: Gin)
 }
+
+model Seed {
+  id       String   @id
+  seededAt DateTime @default(now())
+}
