@@ -249,5 +249,6 @@ function useSegmentsState(props: SegmentPointerProps) {
     [cellSize, cols, containerRef, rows],
   );
 
+  // eslint-disable-next-line react-hooks/refs
   return useReducer(reducer, {});
 }
