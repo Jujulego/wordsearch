@@ -10,8 +10,12 @@ const prisma = new PrismaClient({
   }),
 });
 
-try {
-  await loadLexique4Words(prisma);
-} finally {
-  await prisma.$disconnect();
+async function main() {
+  try {
+    await loadLexique4Words(prisma);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
+
+void main();
