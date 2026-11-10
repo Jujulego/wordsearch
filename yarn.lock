@@ -7386,7 +7386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript-eslint@npm:8.72.1, typescript-eslint@npm:^8.56.0":
+"typescript-eslint@npm:^8.56.0":
   version: 8.72.1
   resolution: "typescript-eslint@npm:8.72.1"
   dependencies:
@@ -7691,7 +7691,6 @@ __metadata:
     tailwindcss: "npm:4.3.5"
     tsx: "npm:4.23.15"
     typescript: "npm:6.0.3"
-    typescript-eslint: "npm:8.72.1"
   languageName: unknown
   linkType: soft
 
