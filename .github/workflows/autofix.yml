@@ -37,7 +37,7 @@ jobs:
         run: yarn lint --fix -f @microsoft/sarif -o eslint-results.sarif
 
       - name: Upload analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@v4.39.2
+        uses: github/codeql-action/upload-sarif@v4.39.3
         with:
           sarif_file: eslint-results.sarif
           wait-for-processing: true
